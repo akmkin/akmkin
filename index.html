@@ -16,7 +16,7 @@
 		     console.log('OK');
 		     status = true;
 		     VK.api("users.get", {}, function (data) {
-				alert("User " + data.response[0].name);
+				alert("User " + data.response[0].first_name);
 			});
 		  }, function() { 
 		     console.log('Err');
