@@ -15,6 +15,9 @@
 		$(document).ready(function(){  VK.init(function() { 
 		     console.log('OK');
 		     status = true;
+		     VK.api("users.get", {}, function (data) {
+				alert("User " + data.response[0].name);
+			});
 		  }, function() { 
 		     console.log('Err');
 		}, '5.69')}); 
