@@ -155,6 +155,7 @@
 		full_x = 220;
 		full_y = 82;
 
+
 		var p1_cards_on_field = [];
 		p1_cards_on_field[0] = p1_cards.pop();
 		p1_cards_on_field[1] = p1_cards.pop();
@@ -168,7 +169,7 @@
 				type: 'image',
 				source: '/akmkin/img/kol/'+entry[1],
 				x: full_x, y: full_y,
-				click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
+				click: function(layer){step(layer.name, 330, 300, 300); bank[0] = p1_cards_on_field.splice(i, 1); p1_cards_on_field[i] = p1_cards.pop();}
 			})
 			.drawLayers();
 			full_x += 110;
@@ -199,6 +200,30 @@
 			full_x += 110;
 			if(i == 3)
 				return;
+		});
+
+
+
+
+		var bank = [];
+		var bank[0] = p1.cards.pop();
+		var bank[1] = p2.cards.pop();
+
+
+		full_x = 330;
+		full_y = 300;
+
+		bank.forEach(function(entry, i) {
+			$myCanvas.addLayer({
+				layer: true,
+				name: 'bank'+entry[1],
+				type: 'image',
+				source: '/akmkin/img/kol/'+entry[1],
+				x: full_x, y: full_y,
+				// click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
+			})
+			.drawLayers();
+			full_x += 120;
 		});
 
 		function shuffle(array) {
