@@ -97,6 +97,11 @@
 
 		var p1_i=0;
 		var p2_i=0;
+		var index = 0;
+
+		p1_table = [];
+		p2_table = [];
+		bank_table = [];
 
 
 		//main
@@ -116,116 +121,331 @@
 			}
 		});
 
+		function check_left(layer, x){
 
-		function step(name, x, y, time){
-			$myCanvas.animateLayer(name, {
-			  x: function(layer) {
-			    return x;
-			  },
-			  y: function(layer) {
-			    return y;
-			  }
-			}, time, 'swing', function(){$('canvas').removeLayer(name);});
+			console.log($myCanvas.getLayer(bank_table[0]).data.match + ' ' + $myCanvas.getLayer(bank_table[1]).data.match + ' ' + layer.data.match);
+
+			if(bank_table[0] == layer.name || bank_table[1] == layer.name )
+				return x;
+			if( x == 330 )
+			{
+				if($myCanvas.getLayer(bank_table[1]).data.match-1 == layer.data.match 
+				   || $myCanvas.getLayer(bank_table[1]).data.match+1 == layer.data.match 
+				   || ($myCanvas.getLayer(bank_table[1]).data.match == 13 && layer.data.match == 1)
+				   || ($myCanvas.getLayer(bank_table[1]).data.match == 1 && layer.data.match == 13 ) )
+				{
+					return 470;
+				}
+				else 
+				{
+					return 330;
+				}
+			}
+			if( x == 470 )
+			{
+				if($myCanvas.getLayer(bank_table[0]).data.match-1 == layer.data.match 
+				   || $myCanvas.getLayer(bank_table[0]).data.match+1 == layer.data.match 
+				   || ($myCanvas.getLayer(bank_table[0]).data.match == 13 && layer.data.match == 1)
+				   || ($myCanvas.getLayer(bank_table[0]).data.match == 1 && layer.data.match == 13 ) )
+				{
+					return 330;
+				}
+				else
+				{
+					return 470;
+				}
+			}
+		}
+
+		move = 55;
+
+		function check_real_step(name, bank){
+			layer = $myCanvas.getLayer(name);
+			if($myCanvas.getLayer(bank).data.match-1 == layer.data.match 
+			   || $myCanvas.getLayer(bank).data.match+1 == layer.data.match 
+			   || ($myCanvas.getLayer(bank).data.match == 13 && layer.data.match == 1)
+			   || ($myCanvas.getLayer(bank).data.match == 1 && layer.data.match == 13 ) )
+				return true;
+			return false;
+		}
+
+		function step(name, x, y, time, old_x, old_y){
+			$myCanvas.setLayer(name, {index:0});
+			$myCanvas.moveLayer(name, 55).drawLayers();
+			x = check_left($myCanvas.getLayer(name), x);
+			if(x == 330)
+				res = bank_table[0];
+			else 
+				res = bank_table[1];
+			// console.log(x);
+			$myCanvas.animateLayer(
+			    name, 
+			    {
+					x: function(layer) {
+						return x;
+					},
+					y: function(layer) {
+						return y;
+					},
+				},
+				time, 
+				'swing', 
+				function(){
+					if(!check_real_step(name, res)){
+						$myCanvas.animateLayer(
+						    name, 
+						    {
+								x: function(layer) {
+									return old_x;
+								},
+								y: function(layer) {
+									return old_y;
+								},
+							},
+							time
+						);
+					}
+					else{
+						if(x == 330)
+							bank_table[0] = name;
+						else 
+							bank_table[1] = name;
+					}
+				}
+			);
 			
 		}
 
-		$myCanvas
-		//rub1
-		.addLayer({
-		  layer: true,
-		  name: 'rub1',
-		  type: 'image',
-		  source: '/akmkin/img/kol/rub.png',
-		  x: 60, y: 82,
-		  // width: 200, height: 125,
-		  // click: function(layer){an(layer.name, 10, 10, 100);}
-		})
-		//rub2
-		.addLayer({
-		  layer: true,
-		  name: 'rub2',
-		  type: 'image',
-		  source: '/akmkin/img/kol/rub.png',
-		  x: 740, y: 518,
-		  // width: 200, height: 125,
-		  // click: function(layer){an(layer.name, -10, -10, 100);}
-		})
-		.drawLayers();
-
-		full_x = 220;
-		full_y = 82;
-
-
-		var p1_cards_on_field = [];
-		p1_cards_on_field[0] = p1_cards.pop();
-		p1_cards_on_field[1] = p1_cards.pop();
-		p1_cards_on_field[2] = p1_cards.pop();
-		p1_cards_on_field[3] = p1_cards.pop();
-
-		p1_cards_on_field.forEach(function(entry, i) {
-			$myCanvas.addLayer({
-				layer: true,
-				name: entry[1],
-				type: 'image',
-				source: '/akmkin/img/kol/'+entry[1],
-				x: full_x, y: full_y,
-				click: function(layer){step(layer.name, 330, 300, 300); bank[0] = p1_cards_on_field.splice(i, 1); p1_cards_on_field[i] = p1_cards.pop();}
-			})
-			.drawLayers();
-			full_x += 110;
-			if(i == 3)
-				return;
-		});
-
-
-		full_x = 220;
-		full_y = 518;
-
-		var p2_cards_on_field = [];
-		p2_cards_on_field[0] = p2_cards.pop();
-		p2_cards_on_field[1] = p2_cards.pop();
-		p2_cards_on_field[2] = p2_cards.pop();
-		p2_cards_on_field[3] = p2_cards.pop();
-
-		p2_cards_on_field.forEach(function(entry, i) {
-			$myCanvas.addLayer({
-				layer: true,
-				name: entry[1],
-				type: 'image',
-				source: '/akmkin/img/kol/'+entry[1],
-				x: full_x, y: full_y,
-				click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
-			})
-			.drawLayers();
-			full_x += 110;
-			if(i == 3)
-				return;
-		});
-
-
-
 
 		var bank = [];
-		bank[0] = p1_cards.pop();
-		bank[1] = p2_cards.pop();
 
 
-		full_x = 330;
-		full_y = 300;
+		$myCanvas.animateLayer;
+		start_speed(p1_cards, p2_cards, bank);
 
-		bank.forEach(function(entry, i) {
-			$myCanvas.addLayer({
-				layer: true,
-				name: 'bank'+entry[1],
-				type: 'image',
-				source: '/akmkin/img/kol/'+entry[1],
-				x: full_x, y: full_y,
-				// click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
+		function start_speed(p1_cards, p2_cards, bank)
+		{
+			p1_cards.reverse();
+			p2_cards.reverse();
+
+			p1_cards.forEach(function(entry, i) {
+				$myCanvas.addLayer({
+					layer: true,
+					name: entry[1],
+					type: 'image',
+					visible: false,
+					source: '/akmkin/img/kol/'+entry[1],
+					x: 60, y: 82,
+					data: {clickable: false, oldx:0, oldy:0, match: entry[2]},
+					click: function(layer){step(layer.name, 330, 300, 300, layer.data.oldx, layer.data.oldy);}
+				})
+				.drawLayers();
+			});
+
+			p2_cards.forEach(function(entry, i) {
+				$myCanvas.addLayer({
+					layer: true,
+					name: entry[1],
+					type: 'image',
+					visible: false,
+					source: '/akmkin/img/kol/'+entry[1],
+					x: 740, y: 518,
+					data: {clickable: false, oldx:0, oldy:0, match: entry[2]},
+					click: function(layer){step(layer.name, 470, 300, 300, layer.data.oldx, layer.data.oldy);}
+				})
+				.drawLayers();
+			});
+			
+			p1_cards.reverse();
+			p2_cards.reverse();
+
+			x1 = 580;
+			y1 = 82;
+			x2 = 220;
+			y2 = 518;
+
+			time = 700;
+
+			for( i = 0, j = 0; i < 1; i++)
+			{
+				$myCanvas.setLayer(p1_cards[0][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p2_cards[0][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p1_cards[0][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p1_cards[1][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p2_cards[1][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p1_cards[2][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p2_cards[2][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p1_cards[3][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p2_cards[3][1], {
+				  visible: true,
+				  data: {clickable: true},
+				}).setLayer(p1_cards[4][1], {
+				  visible: true,
+				}).setLayer(p2_cards[4][1], {
+				  visible: true,
+				})
+				.drawLayers();
+				an1(i);
+				an2(j);
+
+				function an1(ii){
+					$myCanvas.setLayer(p1_cards[ii][1], {
+						data: {oldx:x1, oldy:y1, match: p1_cards[ii][2]},
+					});
+					$myCanvas.animateLayer(p1_cards[ii][1], {
+						  x: function(layer) {
+						    return x1;
+						  }
+						}, time, 'swing', function(){ time -= 50; x1 -= 120; 
+							if(ii+1 < 4) {
+								p1_table[ii] = p1_cards[ii][1];
+								an1(++ii);
+							}
+							else {bank_table[0] = p1_cards[ii+1][1]; step(p1_cards[ii+1][1], 330, 300, 300);return}
+							return;});
+				}
+				
+				function an2(jj){
+					$myCanvas.setLayer(p2_cards[jj][1], {
+						data: {oldx:x2, oldy:y2, match: p2_cards[jj][2]},
+					});
+					$myCanvas.animateLayer(p2_cards[jj][1], {
+						  x: function(layer) {
+						    return x2;
+						  }
+						}, time, 'swing', function(){ time -= 50; x2 += 120; 
+							if(jj+1 < 4){
+								p2_table[jj] = p2_cards[jj][1];
+								an2(++jj);
+							}
+							else {bank_table[1] = p2_cards[jj+1][1]; step(p2_cards[jj+1][1], 470, 300, 300);return}
+							return;});
+				}
+
+				// x1 += 120;
+				// x2 += 120;
+				$myCanvas.drawLayers();
+			}
+
+
+			$myCanvas
+			//rub1
+			.addLayer({
+			  layer: true,
+			  name: 'rub1',
+			  type: 'image',
+			  source: '/akmkin/img/kol/rub.png',
+			  x: 60, y: 82,
+			})
+			//rub2
+			.addLayer({
+			  layer: true,
+			  name: 'rub2',
+			  type: 'image',
+			  source: '/akmkin/img/kol/rub.png',
+			  x: 740, y: 518,
 			})
 			.drawLayers();
-			full_x += 120;
-		});
+		}
 
+		// rewrite_speed(p1_cards_on_field, p2_cards_on_field, bank); 
+
+		// function rewrite_speed(p1_cards_on_field, p2_cards_on_field, bank){
+		// 	$myCanvas
+		// 	//rub1
+		// 	.addLayer({
+		// 	  layer: true,
+		// 	  name: 'rub1',
+		// 	  type: 'image',
+		// 	  source: '/akmkin/img/kol/rub.png',
+		// 	  x: 60, y: 82,
+		// 	  // width: 200, height: 125,
+		// 	  // click: function(layer){an(layer.name, 10, 10, 100);}
+		// 	})
+		// 	//rub2
+		// 	.addLayer({
+		// 	  layer: true,
+		// 	  name: 'rub2',
+		// 	  type: 'image',
+		// 	  source: '/akmkin/img/kol/rub.png',
+		// 	  x: 740, y: 518,
+		// 	  // width: 200, height: 125,
+		// 	  // click: function(layer){an(layer.name, -10, -10, 100);}
+		// 	})
+		// 	.drawLayers();
+
+			
+		// 	full_x = 330;
+		// 	full_y = 300;
+
+		// 	bank.forEach(function(entry, i) {
+		// 		$myCanvas.addLayer({
+		// 			layer: true,
+		// 			name: 'bank'+entry[1],
+		// 			type: 'image',
+		// 			source: '/akmkin/img/kol/'+entry[1],
+		// 			x: full_x, y: full_y,
+		// 			// click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
+		// 		})
+		// 		.drawLayers();
+		// 		full_x += 120;
+		// 	});
+
+		// 	full_x = 220;
+		// 	full_y = 82;
+
+
+		// 	p1_cards_on_field.forEach(function(entry, i) {
+		// 		$myCanvas.addLayer({
+		// 			layer: true,
+		// 			name: entry[1],
+		// 			type: 'image',
+		// 			source: '/akmkin/img/kol/'+entry[1],
+		// 			x: full_x, y: full_y,
+		// 			click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
+		// 		})
+		// 		.drawLayers();
+		// 		full_x += 110;
+		// 		if(i == 3)
+		// 			return;
+		// 	});
+
+
+		// 	full_x = 220;
+		// 	full_y = 518;
+
+
+		// 	p2_cards_on_field.forEach(function(entry, i) {
+		// 		$myCanvas.addLayer({
+		// 			layer: true,
+		// 			name: entry[1],
+		// 			type: 'image',
+		// 			source: '/akmkin/img/kol/'+entry[1],
+		// 			x: full_x, y: full_y,
+		// 			click: function(layer){step(layer.name, 450, 300, 300); p2_cards_on_field[i] = p2_cards.pop();}
+		// 		})
+		// 		.drawLayers();
+		// 		full_x += 110;
+		// 		if(i == 3)
+		// 			return;
+		// 	});
+		// }
 		function shuffle(array) {
 			var currentIndex = array.length, temporaryValue, randomIndex;
 			while (0 !== currentIndex) {
