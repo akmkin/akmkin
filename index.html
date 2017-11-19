@@ -90,7 +90,7 @@
 		x = 0;
 		y = 0;
 
-		shuffle(kol);
+		// shuffle(kol);
 
 		var p1_cards = [];
 		var p2_cards = [];
@@ -159,6 +159,10 @@
 
 		move = 55;
 
+
+
+
+
 		function check_real_step(name, bank){
 			layer = $myCanvas.getLayer(name);
 			if($myCanvas.getLayer(bank).data.match-1 == layer.data.match 
@@ -168,6 +172,11 @@
 				return true;
 			return false;
 		}
+
+
+
+
+
 
 		function step(name, x, y, time, old_x, old_y){
 			$myCanvas.setLayer(name, {index:0});
@@ -190,7 +199,7 @@
 				},
 				time, 
 				'swing', 
-				function(){
+				function(layer){
 					if(!check_real_step(name, res)){
 						$myCanvas.animateLayer(
 						    name, 
@@ -210,6 +219,15 @@
 							bank_table[0] = name;
 						else 
 							bank_table[1] = name;
+						if(layer.data.player == 1){
+							rewr_an1(p1_index, layer.data.index);
+							p1_index++;
+						}
+						else if(layer.data.player == 2){
+							rewr_an2(p2_index, layer.data.index);
+							p2_index++;
+						}
+						rewrite_speed();
 					}
 				}
 			);
@@ -218,6 +236,9 @@
 
 
 		var bank = [];
+
+		var p1_index = 4;
+		var p2_index = 4;
 
 
 		$myCanvas.animateLayer;
@@ -306,7 +327,7 @@
 
 				function an1(ii){
 					$myCanvas.setLayer(p1_cards[ii][1], {
-						data: {oldx:x1, oldy:y1, match: p1_cards[ii][2]},
+						data: {oldx:x1, oldy:y1, match: p1_cards[ii][2], index: ii, player: 1},
 					});
 					$myCanvas.animateLayer(p1_cards[ii][1], {
 						  x: function(layer) {
@@ -323,7 +344,7 @@
 				
 				function an2(jj){
 					$myCanvas.setLayer(p2_cards[jj][1], {
-						data: {oldx:x2, oldy:y2, match: p2_cards[jj][2]},
+						data: {oldx:x2, oldy:y2, match: p2_cards[jj][2], index:jj, player: 2},
 					});
 					$myCanvas.animateLayer(p2_cards[jj][1], {
 						  x: function(layer) {
@@ -362,6 +383,108 @@
 			  x: 740, y: 518,
 			})
 			.drawLayers();
+		}
+
+
+
+
+
+
+
+
+		function rewr_an1(ii, index){
+			if(index == 0)
+			{
+				x1 = 580;
+				time = 700;
+			}
+			if(index == 1)
+			{
+				x1 = 460;
+				time = 600;
+			}
+			if(index == 2)
+			{
+				x1 = 340;
+				time = 500;
+			}
+			if(index == 3)
+			{
+				x1 = 220;
+				time = 400;
+			}
+			console.log(index);
+
+			y1 = 82;
+			try{
+				$myCanvas.setLayer(p1_cards[ii+1][1], {
+					visible: true,
+					data: {oldx:x1, oldy:y1, match: p1_cards[ii+1][2], index: index, player: 1},
+				});
+				$myCanvas.animateLayer(p1_cards[ii+1][1], {
+					  x: function(layer) {
+					    return x1;
+					  }
+					}, time, 'swing');
+			}
+			catch (exception_var) {
+				if(p1_index == 25 || p2_index == 25)
+				{
+					$('canvas').removeLayers();
+					p1_index = p2_index = 4;
+					start_speed(p1_cards, p2_cards, bank);
+				}
+			}
+		}
+		
+		function rewr_an2(jj, index2){
+			if(index2 == 3)
+			{
+				x2 = 580;
+				time = 400;
+			}
+			if(index2 == 2)
+			{
+				x2 = 460;
+				time = 500;
+			}
+			if(index2 == 1)
+			{
+				x2 = 340;
+				time = 600;
+			}
+			if(index2 == 0)
+			{
+				x2 = 220;
+				time = 700;
+			}
+			console.log(index2);
+
+			y2 = 518;
+
+			try{
+				$myCanvas.setLayer(p2_cards[jj+1][1], {
+					visible: true,
+					data: {oldx:x2, oldy:y2, match: p2_cards[jj+1][2], index:index2, player: 2},
+				});
+				$myCanvas.animateLayer(p2_cards[jj+1][1], {
+					  x: function(layer) {
+					    return x2;
+					  }
+					}, time, 'swing');
+			}
+			catch (exception_var) {
+				$('canvas').removeLayers();
+				start_speed(p1_cards, p2_cards, bank);
+			}
+		}
+
+
+
+
+		function rewrite_speed(){
+			// start_speed(p1_cards, p2_cards, bank);
+			$myCanvas.drawLayers();
 		}
 
 		function shuffle(array) {
