@@ -6,8 +6,8 @@
 	</head>
 	<body>
 	<script src="https://vk.com/js/api/xd_connection.js?2"  type="text/javascript"></script>
-	<script src="/js/jquery.js"></script>
-	<script src="/js/jcanvas.js"></script>
+	<script src="https://akmkin.github.io/akmkin/js/jquery.js"></script>
+	<script src="https://akmkin.github.io/akmkin/js/jcanvas.js"></script>
 
 	<script type="text/javascript"> 
 		window.name = 'fXD';
@@ -22,8 +22,6 @@
 	<!-- <div align="center"> -->
 		<canvas id='card' height='600' width='800' style="border:1px solid black;background:#000;">Обновите браузер</canvas>
 	<!-- </div> -->
-	<script src="/js/jquery.js"></script>
-	<script src="/js/jcanvas.js"></script>
 	<script>
  
 		kol = [
@@ -134,7 +132,7 @@
 		  layer: true,
 		  name: 'rub1',
 		  type: 'image',
-		  source: 'img/kol/rub.png',
+		  source: '/akmkin/img/kol/rub.png',
 		  x: 60, y: 82,
 		  // width: 200, height: 125,
 		  // click: function(layer){an(layer.name, 10, 10, 100);}
@@ -144,7 +142,7 @@
 		  layer: true,
 		  name: 'rub2',
 		  type: 'image',
-		  source: 'img/kol/rub.png',
+		  source: '/akmkin/img/kol/rub.png',
 		  x: 740, y: 518,
 		  // width: 200, height: 125,
 		  // click: function(layer){an(layer.name, -10, -10, 100);}
@@ -165,7 +163,7 @@
 				layer: true,
 				name: entry[1],
 				type: 'image',
-				source: 'img/kol/'+entry[1],
+				source: '/akmkin/img/kol/'+entry[1],
 				x: full_x, y: full_y,
 				click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
 			})
@@ -190,7 +188,7 @@
 				layer: true,
 				name: entry[1],
 				type: 'image',
-				source: 'img/kol/'+entry[1],
+				source: '/akmkin/img/kol/'+entry[1],
 				x: full_x, y: full_y,
 				click: function(layer){step(layer.name, 330, 300, 300); p1_cards_on_field[i] = p1_cards.pop();}
 			})
